@@ -1,0 +1,152 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v2",
+        "update_url": null
+    },
+    "exported_at": "2025-07-04T09:27:54+12:00",
+    "name": "Resonite Headless",
+    "author": "bredo@voxelbone.cloud",
+    "description": "Resonite Headless Egg, published by Voxel Bone Cloud",
+    "features": null,
+    "docker_images": {
+        "ghcr.io\/voxelbonecloud\/pterodactyl-resonite:main": "ghcr.io\/voxelbonecloud\/pterodactyl-resonite:main"
+    },
+    "file_denylist": [],
+    "startup": "dotnet Headless\/Resonite.dll -HeadlessConfig Config\/{{CONFIG_FILENAME}} -Logs Logs\/ $(if [ \"${ENABLE_MODS}\" = \"1\" ]; then echo \"-LoadAssembly Libraries\/ResoniteModLoader.dll\"; fi)",
+    "config": {
+        "files": "{}",
+        "startup": "{\r\n    \"done\": \"World running...\"\r\n}",
+        "logs": "{}",
+        "stop": "shutdown"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/bash\r\n\r\n# Resonite Headless install script\r\n# Copyright 2024 Voxel Bone Cloud.\r\n\r\n# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \u201cSoftware\u201d), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and\/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\r\n\r\n#THE SOFTWARE IS PROVIDED \u201cAS IS\u201d, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\r\n\r\n# Create extra directories used by the headless\r\nmkdir -p \/mnt\/server\/Config\r\nmkdir -p \/mnt\/server\/Logs\r\n\r\n# Create basic config\r\necho -e \\\r\n'{\r\n    \"$schema\": \"https:\/\/raw.githubusercontent.com\/Yellow-Dog-Man\/JSONSchemas\/main\/schemas\/HeadlessConfig.schema.json\",\r\n    \"loginCredential\": null,\r\n    \"loginPassword\": null,\r\n    \"startWorlds\": [\r\n    {\r\n      \"isEnabled\": true,\r\n      \"sessionName\": null,\r\n      \"accessLevel\": \"Anyone\",\r\n      \"loadWorldURL\": null,\r\n      \"loadWorldPresetName\": \"Grid\"\r\n    }\r\n  ]\r\n}' > \/mnt\/server\/Config\/Config.json \r\n\r\n# Make sure we have some dependencies installed\r\ndpkg --add-architecture i386\r\napt update\r\napt install curl lib32gcc-s1 -y\r\n\r\n# Download SteamCMD\r\nmkdir -p \/mnt\/server\/steamcmd\r\ncd \/mnt\/server\/steamcmd\r\ncurl -sqL https:\/\/steamcdn-a.akamaihd.net\/client\/installer\/steamcmd_linux.tar.gz | tar zxvf -\r\n\r\n# Resonite is downloaded in the entrypoint, so we won't download it here.",
+            "container": "debian:bookworm",
+            "entrypoint": "bash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Steam Username",
+            "description": "Your Steam username",
+            "env_variable": "STEAM_USER",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Steam Password",
+            "description": "Your Steam password",
+            "env_variable": "STEAM_PASSWORD",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Steam Beta Code",
+            "description": "The Steam Beta Code obtained through sending \/headlessCode to the Resonite bot",
+            "env_variable": "BETA_CODE",
+            "default_value": "",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Steam Branch",
+            "description": "The Steam branch to be downloaded from",
+            "env_variable": "STEAM_BRANCH",
+            "default_value": "headless",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "required|string|max:32",
+            "field_type": "text"
+        },
+        {
+            "name": "Config File Name",
+            "description": "The name of your Config file",
+            "env_variable": "CONFIG_FILENAME",
+            "default_value": "Config.json",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:32",
+            "field_type": "text"
+        },
+        {
+            "name": "Enable ResoniteModLoader",
+            "description": "Enables ResoniteModLoader",
+            "env_variable": "ENABLE_MODS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "MOD_PROMETHEUS",
+            "description": "Add Prometheus exporter (Requires ResoniteModLoader)",
+            "env_variable": "MOD_PROMETHEUS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Install HeadlessTweaks",
+            "description": "Automatically installs the HeadlessTweaks mod (Requires ResoniteModLoader)",
+            "env_variable": "MOD_HEADLESSTWEAKS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Install HeadlessUserCulling",
+            "description": "Automatically installs the HeadlessUserCulling mod (Requires ResoniteModLoader)",
+            "env_variable": "MOD_HEADLESSUSERCULLING",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Install StresslessHeadless",
+            "description": "Automatically installs the StresslessHeadless mod (Requires ResoniteModLoader)",
+            "env_variable": "MOD_STRESSLESSHEADLESS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "boolean|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Instances",
+            "description": "Optional. Comma-separated instance names (e.g. main,events). Each runs its own headless with Config\/<name>.json. Leave empty for a single instance using Config File Name.",
+            "env_variable": "INSTANCES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:128",
+            "field_type": "text"
+        },
+        {
+            "name": "Instance Watchdog Timeout",
+            "description": "Optional, multi-instance only. Restart an instance whose -Watchdog file has not updated for this many seconds. 0 disables.",
+            "env_variable": "WATCHDOG_TIMEOUT",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|integer|min:0|max:86400",
+            "field_type": "text"
+        }
+    ]
+}
